@@ -121,7 +121,6 @@ s1
 
 #### Checking expression
 
-
 So now we can get to the expression that verifies that `'pharo'` is an isogram. 
 
 ```
@@ -142,7 +141,6 @@ s size = s asSet size
 
 
 #### Adding a method to the class String
-
 
 Now we can define a new method to the class `String`. Since you may propose multiple implementations, we postfix the message with the implementation strategy we use. Here we define `isIsogramSet`
 
@@ -174,21 +172,19 @@ And we test that our method is correct.
 
 Wait! We do not want to have to check manually all the time!
 
-!!coffee When you verify two times the same things, better write a test! Remember you write  a test once and execute it million times!
+#####Take!
+When you verify two times the same things, better write a test! Remember you write  a test once and execute it million times!
 
 ### Defining a test
 
-
 To define tests we could extend the `StringTest` class, but we prefer to keep our experiment contained in a package of its own. To achieve this, we will create a package `LoopStarGram` and define the `String >> isIsogramSet` method as a class extension of that package.
 
-!!important To define a method as a class extension of package `Foo`, just name the protocol of the method `*Foo`.
+To define a method as a class extension of a package, click on the extension checkbox of the method definition pane and select the package you want the method to be packaged in.
 
 We define the class `GramCheckerTest` as follow. It inherits from `TestCase` and belongs to the package `LoopStarGram`.
 
 ```
-TestCase subclass: #GramCheckerTest
-	instanceVariableNames: ''
-	classVariableNames: ''
+TestCase << #GramCheckerTest
 	package: 'LoopStarGram'
 ```
 
@@ -201,10 +197,10 @@ Test methods are special.
 - A test method can contain expressions such as `self assert: aTrueExpression` or `self deny: aFalseExpression`. 
 
 
-Here 
+Here:
 - Our method is named `testIsogramSetImplementation`.
-- We check \(`assert:`\) that 'pharo' is an isogram i.e., that `'pharo' isIsogramSet` returns `true`. 
-- We check \(`deny:`\) that 'phaoro' is _not_ an isogram i.e., that `'phaoro' isIsogramSet` returns `false`.
+- We check (`assert:`) that 'pharo' is an isogram i.e., that `'pharo' isIsogramSet` returns `true`. 
+- We check (`deny:`) that 'phaoro' is _not_ an isogram i.e., that `'phaoro' isIsogramSet` returns `false`.
 
 ```
 GramCheckerTest >> testIsogramSetImplementation
@@ -213,7 +209,8 @@ GramCheckerTest >> testIsogramSetImplementation
 ```
 
 
-!!important When you write a test, make sure that you test different situations or results. Why? Because imagine that your methods always return true, you would never be sure that not all the string are isograms. So always check for positive and negative results. 
+##### Take!
+When you write a test, make sure that you test different situations or results. Why? Because imagine that your methods always return true, you would never be sure that not all the string are isograms. So always check for positive and negative results. 
 
 Messages `assert:` and `deny:` are equivalent as follows: assert \(something\) is equals to deny\(something not\) and assert \(something not\) is equivalent to deny \(something\). Hence the following expressions are strictly equivalent. 
 	
@@ -239,11 +236,11 @@ Then we define a new test method `testAllIsogramSet` that simply iterates over t
 
 In Pharo, there are multiple ways to express loops on collections, the easiest being to send the message `do:` to the collection. The `do:` message executes the block on each element of the collection one by one.
 
-!!coffee The `do:` message executes its argument taking each element of the receiver collection one by one. Note the way we express it, we ask the collection to iterate on itself. Note also that we do not have to worry about the size of the collection and the index of an element as this is often the case in other languages.
+##### Take!
+The `do:` message executes its argument taking each element of the receiver collection one by one. Note the way we express it, we ask the collection to iterate on itself. Note also that we do not have to worry about the size of the collection and the index of an element as this is often the case in other languages.
 
 ```
 GramCheckerTest >> testAllIsogramSet
-	
 	self isograms do: [ :word |
 		self assert: word isIsogramSet ]
 ```
@@ -260,8 +257,7 @@ GramCheckerTest >> notIsograms
 And we make our test using both. 
 
 ```
-GramCheckerTest >> testAllIsogramSetImplementation
-	
+GramCheckerTest >> testAllIsogramSetImplementation	
 	self isograms do: [ :word |
 		self assert: word isIsogramSet ].
 	self notIsograms do: [ :word |
@@ -408,7 +404,6 @@ We would like to be able to specify the alphabet to be used to verify. Yes we de
 
 ```
 GramCheckerTest >> testIsPangramIn
-
 	self assert: ('The quick brown fox jumps over the lazy dog' isPangramIn: 'abcdefghijklmnopqrstuvwxyz').
 	self assert: ('les poux papas et les poux pas papas' isPangramIn: 'apouxetl').
 ```
@@ -462,7 +457,6 @@ We will start to write a test for the method `detectFirstMissingLetterFor:`. As 
 
 ```
 GramCheckerTest >> testDetectFirstMissingLetter
-
 	self assert: ('the quick brown fox jumps over the lzy dog' 
 		detectFirstMissingLetterFor: 'abcdefghijklmnopqrstuvwxyz') equals: $a.
 	self assert: ('the uick brown fox jumps over the lazy dog' 
@@ -576,7 +570,6 @@ A palindrome is a word or sentence that can be read in both way. 'KAYAK' is a pa
 
 ```
 GramCheckerTest >> testIsPalindrome
-
 	self assert: 'ete' isPalindrome.
 	self assert: 'kayak' isPalindrome.
 	self deny: 'etat' isPalindrome.
@@ -586,7 +579,6 @@ GramCheckerTest >> testIsPalindrome
 #### Some possible implementations
 
 Here is a list of possible implementation.
-
 - You can iterate on strings and check that the first element and the last element are the same. 
 - You can also reverse the receiver \(message `reverse`\) and compare the character one by one. You can use the message `with:do:` which iterate on two collections. 
 
@@ -610,7 +602,7 @@ res
 You can also add the fact that space do not count. 
 
 ```
-	self assert: 'Elu par cette crapule' isPalindrome.
+self assert: 'Elu par cette crapule' isPalindrome.
 ```
 
 
