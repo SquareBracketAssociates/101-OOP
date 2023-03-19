@@ -1,1 +1,6 @@
 <!inputFile|path=Chapters/Introduction/Introduction.md!>
+
+# Getting in touch with Pharo
+
+<!inputFile|path=Chapters/GettingStarted/GettingStarted.md!>
+%removed from now the table
