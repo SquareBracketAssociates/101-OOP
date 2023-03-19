@@ -12,3 +12,5 @@
 <!inputFile|path=Chapters/Counter/Counter.md!>
 
 <!inputFile|path=Chapters/Tests/Tests.md!>
+
+<!inputFile|path=Chapters/Katas/GramKatas.md!>
