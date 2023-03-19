@@ -1,3 +1,9 @@
+# Notes for stef
+
+- Add Joe the box example before anything
+- Move counter to object part
+- simplify LAN or remove
+
 <!inputFile|path=Chapters/Introduction/Introduction.md!>
 
 # Getting in touch with Pharo
