@@ -23,8 +23,6 @@
 % !!Playing with Joe the box
 % Will have to implement it first on morphic or bloc....
 
-
-
 <!inputFile|path=Chapters/Tests/Tests.md!>
 
 <!inputFile|path=Chapters/Katas/GramKatas.md!>
