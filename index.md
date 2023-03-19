@@ -7,7 +7,7 @@
 - simplify LAN or remove
 
 - Check the intro maps diagram because it is not up to date
-
+- Should redo the screen capture of the test chapter
 ## Done
 - revisited intro 
 

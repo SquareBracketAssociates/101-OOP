@@ -4,17 +4,15 @@
 In this chapter we start by showing that tests are simple. Second we present test driven design - basically what we will try to do systematically in this book. Then we discuss why we test, and what makes a good test.
 We then present a series of small examples showing how to use SUnit. 
 
-### Writing a test in 2 minutes
+###  A test in 2 minutes
 
-
-A test is a context, a stimulus and an assertion \(verification that we get the correct state\).
+A test is a _context_, a _stimulus_ and at least one _assertion_ (verification that we get the correct answer).
 Here is an example on sets. Remember that sets are mathematical entities having only one occurrence of their elements.
 
 First we test that adding an element changes the size of the set.
 - **Context:** we take an empty set.
 - **Stimulus:** we add `$A` into the empty set.
 - **Assertion:** the set has one element.
-
 
 Another test is that a set only contains only one occurence of one element.
 - **Context:** we take an empty set.
@@ -24,22 +22,26 @@ Another test is that a set only contains only one occurence of one element.
 - **Assertion:** the set has still one element.
 
 
-#### How do we declare a test in Pharo?
+### A test in Pharo
 
 This is really easy to declare one test: we define one class \(that will host multiple test definitions\) and one method per test.
 
-Here the class `MyExampleSetTest` should inherit from `TestCase`. It is the place to define the tests
-related to the class `Set`. 
+Usually a class of tests inherits from the class `TestCase`. We will explain later what inherits means. Basically it says that a class of tests should behave (know how to execute tests) as the class `TestCase` and we do not have to reimplement everything. 
+
+
+Here using the `<<` message we create the class `MyExampleSetTest` that inherits from `TestCase`. It will be the place to define the tests related to the class `Set`. 
 
 ```
 TestCase << #MyExampleSetTest
 	package: 'MySetTest'
 ```
 
+Now we can define one test expression as a method. There is one constraint: the method selector should start with the string `test`.
 
-Now we can define one test expression as a method. There is one constraint: the method selector should start with `test`.
+Here we write as Pharo test, the second test described previously: we make sure that when requested to add twice the same element a set only adds one. 
+
 ```
-MyExampleSetTest >> testAddTwice
+MyExampleSetTest >> testAddTwiceTheSameElementOnlyAddOne
 	| s |
 	s := Set new. 
 	self assert: s isEmpty.
@@ -50,9 +52,10 @@ MyExampleSetTest >> testAddTwice
 ```
 
 
-Then using the Test runner or pressing on icons of the Pharo browser \(as shown in Figure *@fig:browsertests@*\), you will be able to execute the method `testAddTwice` and it will tell you if it passes or fails \(i.e., if its assertions are true\). Now that you know that writing a test is not complex. Let us look a bit at the theory before going into more details. 
+Then using the Test runner or pressing on icons of the Pharo browser (as shown in Figure *@fig:browsertests@*), you will be able to execute the method `testAddTwice` and it will tell you if it passes or fails \(i.e., if its assertions are true\). Now that you know that writing a test is not complex. Let us look a bit at the theory before going into more details. 
 
-!!coffee A test is a context, a stimulus and an _assertion_ \(verification that we get the correct state\).
+##### Take! 
+A test is a _context_, a _stimulus_ and a least one _assertion_ (verification that we get the correct state).
 
 ### Test Driven Design
 
@@ -111,6 +114,7 @@ Tests play several roles:
 
 - Finally, writing tests during, or even before, programming forces you to think about the functionality that you want to design, _and how it should appear to the client code_, rather than about how to implement it.
 
+### Writing test first
 
 By writing the tests first, i.e., before the code, you are compelled to state
 the context in which your functionality will run, the way it will interact with the client code, and the expected results. Your code style will definitively improve.
@@ -179,12 +183,13 @@ Pay attention: test classes are special classes. As subclasses of `TestCase` the
 
 #### Step 1: Create the test class
 
-We use the class `MyExampleSetTest` to group all the tests related to the class `Set`. First you should create a new subclass of `TestCase` called `MyExampleSetTest`. 
+We repeat here the class creation so that this section is self-contained. No need to do it 
+if you already did it. We use the class `MyExampleSetTest` to group all the tests related to the class `Set`. 
+
+First you should create a new subclass of `TestCase` called `MyExampleSetTest`. 
 
 ```
-TestCase subclass: #MyExampleSetTest
-	instanceVariableNames: ''
-	classVariableNames: ''
+TestCase << #MyExampleSetTest
 	package: 'MySetTest'
 ```
 
@@ -200,7 +205,7 @@ test suites. Test methods take no arguments.
 
 Define the following test method named `testIncludes`. It tests
 the `includes:` method of class `Set`. The test says that sending the message
-`includes: 5` to a set containing 5 should return `true`. 
+ `includes: 5` to a set containing 5 should return `true`.
 
 ```
 MyExampleSetTest >> testIncludes
@@ -210,7 +215,6 @@ MyExampleSetTest >> testIncludes
 	self assert: (full includes: 6)
 ```
 
-
 As you see this is quite simple. Let's continue.
 
 #### Step 3: Run the test
@@ -219,7 +223,7 @@ As you see this is quite simple. Let's continue.
 The easiest way to run the tests is directly from the browser. Simply click on
 the icon of the class name, or on an individual test method, or use the  _Run
 tests \(t\)_ . The test methods will be flagged green or red,
-depending on whether they pass or not \(as shown in Figure *@fig:browsertests@*\).
+depending on whether they pass or not (as shown in Figure *@fig:browsertests@*).
 
 ![Running SUnit tests from the System Browser: Just click on the round little button close to the class or method.](figures/updatedbrowsertests.png width=80&label=fig:browsertests)
 
@@ -340,10 +344,6 @@ MyExampleSetTest debug: #testRemove
 
 #### Step 8: Interpret the results
 
-
-The method `assert:` is defined in the class `TestAsserter`. This is a superclass
-of `TestCase` and therefore all other `TestCase` subclasses and is responsible for
-all kinds of test result assertions.
 The `assert:` method expects a boolean argument, usually the value of a tested expression. When the
 argument is true, the test passes; when the argument is false, the test fails.
 
@@ -364,7 +364,7 @@ As an exercise, modify your tests to provoke both errors and failures.
 
 
 
-### The SUnit cookbook
+### SUnit simple functionalities
 
 
 This section will give you more details on how to use SUnit. If you have used
@@ -443,21 +443,11 @@ MyExampleSetTest suite run
 >>> 5 run, 5 passed, 0 failed, 0 errors
 ```
 
-
-#### Must I subclass TestCase?
-
-
-In JUnit you can build a TestSuite from an arbitrary class containing `test*`
-methods. In SUnit you can do the same but you will then have to create a suite
-by hand and your class will have to implement all the essential `TestCase`
-methods like `assert:`. We recommend, however, that you not try to do this.
-The framework is there: use it.
-
-### Defining a fixture
+### Reusing test context: Defining a fixture
 
 
-In the previous example, we defined the context in each test methods and it was a bit boring to 
-duplicate all the logic in any tests. In fact SUnit proposes a solution to this.
+In the previous example, we defined the context in each test methods and it was a bit boring to duplicate all the logic in any tests. In fact SUnit proposes a solution to this.
+It lets you define a _fixture_, a state that will be reset and reinitialized before any test execution.
 
 #### Step 1: Define the class and context
 
@@ -465,9 +455,8 @@ We can define the context using the two instance variables `full` and `empty` th
 we will use to represent a full and an empty set. 
 
 ```
-TestCase subclass: #MyExampleSetTest
-	instanceVariableNames: 'full empty'
-	classVariableNames: ''
+TestCase <<: #MyExampleSetTest
+	slots: { #full . #empty};
 	package: 'MySetTest'
 ```
 
@@ -479,7 +468,7 @@ The method `TestCase >> setUp` defines the context in which each of  the tests w
 
 Define the `setUp` method as follows, to initialize the `empty` variable to
 refer to an empty set and the `full` variable to refer to a set containing two
-elements. 
+elements, the integer 5 and 6.
 
 ```
 MyExampleSetTest >> setUp
@@ -490,9 +479,11 @@ MyExampleSetTest >> setUp
 
 In testing jargon the context is called the _fixture_ for the test.
 
-#### Step 3: Write some test methods
+#### Step 3: Rewrite some test methods
 
-Now the previous tests methods are much more compact and contain less duplication.
+Now the previous tests methods are much more compact and contain less duplication
+Here is the new definition of `testIncludes`, `testOccurences` and `testRemove`.
+
 ```
 MyExampleSetTest >> testIncludes
 	self assert: (full includes: 5).
@@ -530,6 +521,5 @@ the class `Set`.
 - Each test method should start with the word _test_.
 - Use the `TestCase` methods `assert:`, `deny:` and others to make assertions.
 - Run tests!
-
 
 As exercise, turn the examples given in the first chapter into tests.
