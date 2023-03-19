@@ -4,3 +4,11 @@
 
 <!inputFile|path=Chapters/GettingStarted/GettingStarted.md!>
 %removed from now the table
+
+<!inputFile|path=Chapters/GettingStarted/ChallengingYourself.md!>
+
+% !!Playing with Joe the box
+
+<!inputFile|path=Chapters/Counter/Counter.md!>
+
+<!inputFile|path=Chapters/Tests/Tests.md!>
