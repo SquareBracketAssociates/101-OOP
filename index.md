@@ -6,7 +6,10 @@
 - Introduce minimally a test
 - simplify LAN or remove
 
+- Check the intro maps diagram because it is not up to date
 
+## Done
+- revisited intro 
 
 <!inputFile|path=Chapters/Introduction/Introduction.md!>
 
