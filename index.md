@@ -1,8 +1,12 @@
 # Notes for stef
 
-- Add Joe the box example before anything
+- Not sure about this one because we do that with turtles Add Joe the box example before anything
 - Move counter to object part
+- check class definition
+- Introduce minimally a test
 - simplify LAN or remove
+
+
 
 <!inputFile|path=Chapters/Introduction/Introduction.md!>
 
@@ -16,7 +20,7 @@
 % !!Playing with Joe the box
 % Will have to implement it first on morphic or bloc....
 
-<!inputFile|path=Chapters/Counter/Counter.md!>
+
 
 <!inputFile|path=Chapters/Tests/Tests.md!>
 
@@ -33,6 +37,8 @@ The other chapters contain extremely simple exercises which may be tedious to re
 
 <!inputFile|path=Chapters/OOPNutshell/OOPNutshell.md!>
 % % Split in two files and use the existing files ObjectsAndClass.pillar 
+
+<!inputFile|path=Chapters/Counter/Counter.md!>
 
 <!inputFile|path=Chapters/Converter/Converter.md!>
 
