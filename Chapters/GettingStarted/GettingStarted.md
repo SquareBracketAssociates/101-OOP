@@ -424,21 +424,7 @@ In a method, the receiver \(`self`\) is the default return value of the whole me
 
 This chapter showed you the key syntactic elements. If you want to get a deeper understanding about the syntax please refer to the following mooc videos. The Mooc on Pharo is available at [http://mooc.pharo.org](http://mooc.pharo.org).
 
-The following topics are covered by a dedicated video that is worth watching:
-- Syntax in a nutshell
-- Understanding messages
-- Message precedence
-- Sequence and cascade
-- Blocks
-- Loops
-- Booleans and collections
-- Class and Method Definition
--  Understanding return
--  Parentheses
-- Yourself
-- Variables
-- Essential collections
-- Iterators
+The following topics are covered by a dedicated video that is worth watching: Syntax in a nutshell, Understanding messages, Message precedence,  Sequence and cascade, Blocks, Loops, Booleans and collections, Understanding return, Parentheses, Yourself, Variables, Essential collections, and Iterators.
 
 ### Conclusion 
 

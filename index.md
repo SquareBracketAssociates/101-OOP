@@ -4,7 +4,6 @@
 - Move counter to object part
 - check class definition
 - Introduce minimally a test
-- simplify LAN or remove
 
 - Check the intro maps diagram because it is not up to date
 - Should redo the screen capture of the test chapter
@@ -44,3 +43,14 @@ The other chapters contain extremely simple exercises which may be tedious to re
 <!inputFile|path=Chapters/Converter/Converter.md!>
 
 <!inputFile|path=Chapters/Wallet/Wallet.md!>
+
+
+# Starting with interaction
+
+The purpose of this mini project is to define a little network simulator. 
+ If you understand well basic object-oriented concepts, you can skip this part of the book even if this is fun to code a little simulator and in particular its less guided extensions.
+ 
+<!inputFile|path=Chapters/SimpleLan/Simple-LAN-Definition.md!>
+<!inputFile|path=Chapters/SimpleLan/Simple-LAN-Self.md!>
+<!inputFile|path=Chapters/SimpleLan/Simple-LAN-Hooks.md!>
+
