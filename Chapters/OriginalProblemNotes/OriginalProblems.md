@@ -1,0 +1,5 @@
+##  Card, cockroach and other problems
+
+This chapter presents some old exercises from the inventors of Smalltalk.
+
+The example class Card represents a playing card with a particular suit and rank. CardDeck represents a collection of such Cards; a CardHand is a collection of Cards for an indi- vidual player. Selecting cards from a CardDeck or a CardHand is carried out using example classes that represent sampling with replacement, SampleSpaceWithReplacement, and sampling without replacement, SampleSpaceWithoutReplacement. A well-known programming problem, the drunken cockroach problem, involves counting the number of steps it takes a cockroach to randomly travel over all the tiles in a room. The solution given in this chapter represents each tile as an instance of ex- ample class Tile and the bug as an instance of DrunkenCockroach. The third example in this chapter is of a tree-like data structure represent- ed by classes Tree and Node; a WordNode illustrates the way trees can be used to store strings representing words.

@@ -1,9 +1,9 @@
 ## A basic LAN application
 
-The purpose of this mini project is to define a little network simulator. 
- If you understand well basic object-oriented concepts, you can skip this part of the book even if this is fun to code a little simulator and in particular its less guided extensions.
+The purpose of this mini-project is to define a little network simulator. 
+ If you understand well basic object-oriented concepts, you can skip this part of the book even if it is fun to code a little simulator and in particular its less guided extensions.
  
-From an object-oriented point of view, it is really interesting because it  shows that objects encapsulate responsibilities and that inheritance is used to define incremental behavior.
+From an object-oriented point of view, it is really interesting because it shows that objects encapsulate responsibilities and that inheritance is used to define incremental behavior.
 
 
 You will define step by step an application that simulates a simple Local Area Network (LAN).  You will create several classes: `LNPacket`, `LNNode`, `LNWorkstation`, and `LNPrintServer`. We start with the simplest version of a LAN. In subsequent exercises, we will add new requirements and modify the proposed implementation to take them into account.
@@ -19,21 +19,40 @@ The class `LNNode` will be the root of all the entities that form a LAN: a print
 LNNode inherits from Object
 Collaborators: LNNode and LNPacket
 Responsibility:
-	- name (aSymbol) - returns the name of the LNNode.
+	- name (aSymbol) - returns the name of the current node.
 	- hasNextNode - tells if the receiver has a next node.
-	- accept: aLNPacket - receives a LNPacket and process it. By default, it is sent to the next node.
-	- send: aLNPacket - sends a LNPacket to the next node.
+	- accept: aPacket - receives a Packet and processes it. By default, it is sent to the next node.
+	- send: aPacket - sends a Packet to its next node.
 ```
 
+#### Exercise: Create a new package `LAN`
+
+This package will contain all the code for this project. It will contain the classes for the simulation as well as the classes of the tests.
+
+
+#### Exercise: Create a Test class
+
+To help you write tests, we will define a test class. 
+
+```
+TestCase << #LNNodeTest
+	slots: {};
+	package: 'SimpleLAN'
+```
+
+We will define some test methods as we go.
 
 #### Exercise: Class creation
-Create a new package `LAN`, and create a subclass of `Object` called `LNNode`, with two instance variables: `name` and `nextLNNode`.
+
+Create a subclass of `Object` called `LNNode`, with two instance variables: `name` and `nextNode`.
+
 
 #### Exercise: Accessors
 Create accessors and mutators for the two instance variables. Document the mutators to inform users that the argument passed to `name:` should be a `Symbol`, and the arguments passed to `nextNode:` should be a `LNNode`. 
-We can imagine the following test to validate such a simple behavior.
+Define the following test to validate such a simple behavior.
+
 ```
-LNNode >> testName
+LNNodeTest >> testName
 	| node |
 	node := LNNode new.
 	node name: #PC1.
@@ -41,49 +60,37 @@ LNNode >> testName
 ```
 
 
-#### Exercise: `hasNextNode`   
+#### Exercise: Define the method `hasNextNode`
+
 Define a method called `hasNextNode` that returns whether the receiver has a next LNNode or not. 
+Notice that by default a newly created node does not have a next node.
 The following test should pass. 
 
 ```
 LNNode >> testHasNextNode
-
 	self deny: LNNode new hasNextNode 
 ```
 
-#### Exercise: `printOn:`   
-Create an instance method named `printOn:` that puts the class name and name variable on the argument `aStream`. Include my next node's name only if there is a next node. 
-
-Hint: look at the method `printOn:` from previous exercises or other classes in the system, and consider that the instance variable `name` is a symbol and `nextNode` is a `LNNode`. The expected `printOn:` method behavior is described by the following code:
 
 
-```
-(LNNode new
-   name: #LNNode1 ;
-   nextLNNode: (LNNode new name: #PC1)) printString
+### Sending/receiving packets
 
-'LNNode named: ''LNNode1'' connected to: PC1'
-```
-
-
-#### Exercise: sending/receiving
 A `LNNode` has two basic messages to send and receive packets. 
 
 When a packet is sent to a node, the node has to accept the packet, and send it on. Note that with this simple behavior, the packet can 
 loop infinitely in the LAN. We will propose some solutions to this issue later. To implement this behavior, you should add a protocol `send-receive`, and implement the following two methods:
 
 ```
-Node >> accept: aPacket
-    "Having received aPacket, send it on. This is the default behavior. My subclasses may override me to do something special."
-	
-    self send: aPackage 
+LNNode >> accept: aPacket
+	"Having received aPacket, send it on. This is the default behavior. My subclasses may override me to do something special."
+
+	self send: aPacket
 ```
 
-
 ```
-Node >> send: aPacket
-     "Precondition: self has a nextNode"
-     
+LNNode >> send: aPacket
+	"Precondition: self has a nextNode"
+
 	 self name trace.
 	' sends a packet to: ' trace.
 	 self nextNode name traceCr. 
@@ -95,9 +102,92 @@ Note that
 - `traceCr` has a similar behavior but adds a carriage return at the end. 
 
 
+
+
+
+
+
+
+
+### Better printString
+
+The textual representation of a node is not adequate to follow the simulation. 
+We will address this problem. 
+For this you will redefine the method `printOn:` which is responsible for the textual representation of an object.
+Now before coding head first, let us specify what output we want. 
+For this we will define a couple of tests.
+
+
+Let us start from the simplest case: we have a node with a name and a next node. 
+In this case we want to have the name of the receiver followed by the name of its next node.
+The following test captures this behavior.
+
+```
+testPrintingWithANextNode
+
+	self
+		assert: (LNNode new
+				 name: #LNNode1;
+				 nextNode: (LNNode new name: #PC1)) printString
+		equals: 'LNNode1 -> PC1'
+```
+
+The second case is when the receiver does not have a next node. In this case, we will use `/` to indicate it.
+The following test captures this behavior.  
+
+```
+testPrintingWithoutNextNode
+
+	self
+		assert: (LNNode new
+				 name: #LNNode1;
+				 printString)
+		equals: 'LNNode1 -> /'
+```
+
+Create an instance method named `printOn:` that puts the class name and name variable on the argument `aStream`. 
+We give a partial definition of the method `printOn:`. Fill this method definition up to make the tests pass.
+
+```
+LNNode >> printOn: aStream
+
+	... Your code here ...
+	nextNode
+		ifNil: [ aStream nextPutAll: '/' ]
+		ifNotNil: [ aStream nextPutAll: nextNode name ]
+```
+
+Now there one case that we should still cover: when the node was not given a name. 
+The following test shows the expected result.
+
+
+```
+LNNode >> testPrintingJustInitializedNode
+
+	self
+		assert: LNNode new printString
+		equals: 'unamed -> \'
+```
+
+From an implementation perspective we could add a test in the `printOn:` method. 
+There is, however, a better solution. We should make sure that every node has a default value for name. 
+For this we specialise the method `initialize` on the class `LLNode`. This method is automatically called on object creation.
+
+Define the method `initialize` on the class `LNNode` and make sure that the tests are all passing. 
+
+```
+LNNode >> initialize
+
+	super initialize.
+	... Your code ...
+	
+```
+
+
+
 ###  Creating the class `LNPacket`
 
-A package is an object that represents a piece of information that is sent from nodes to nodes. So the responsibilities of this object are to allow us to define the originator of the packet emission, the address of the receiver and the contents.
+A package is an object that represents a piece of information that is sent from node to node. So the responsibilities of this object are to allow us to define the originator of the packet emission, the address of the receiver, and the contents.
 
 ```
 LNPacket inherits from Object
@@ -233,7 +323,7 @@ LNNode class >> anotherSimpleLan
    node1 nextNode: node2.
    node2 nextNode:igPrinter.
    igPrinter nextNode: node3.
-   node3 nextLNNode: pc.
+   node3 nextNode: pc.
    pc nextNode: mac.
 
    "create a LNPacket and start simulation''
