@@ -25,7 +25,7 @@ Responsibility:
 	- send: aPacket - sends a Packet to its next node.
 ```
 
-#### Exercise: Create a new package `LAN`
+#### Exercise: Create a new package `SimpleLAN`
 
 This package will contain all the code for this project. It will contain the classes for the simulation as well as the classes of the tests.
 
@@ -103,12 +103,6 @@ Note that
 
 
 
-
-
-
-
-
-
 ### Better printString
 
 The textual representation of a node is not adequate to follow the simulation. 
@@ -169,9 +163,9 @@ LNNode >> testPrintingJustInitializedNode
 		equals: 'unamed -> \'
 ```
 
-From an implementation perspective we could add a test in the `printOn:` method. 
+From an implementation perspective, we could add a test in the `printOn:` method. 
 There is, however, a better solution. We should make sure that every node has a default value for name. 
-For this we specialise the method `initialize` on the class `LLNode`. This method is automatically called on object creation.
+For this, we specialize the method `initialize` on the class `LLNode`. This method is automatically called on object creation.
 
 Define the method `initialize` on the class `LNNode` and make sure that the tests are all passing. 
 
@@ -187,40 +181,80 @@ LNNode >> initialize
 
 ###  Creating the class `LNPacket`
 
-A package is an object that represents a piece of information that is sent from node to node. So the responsibilities of this object are to allow us to define the originator of the packet emission, the address of the receiver, and the contents.
+A packet is an object that represents a piece of information that is sent from node to node. The responsibilities of this object are to allow us to define the originator of the packet emission, the address of the receiver, and the contents.
 
 ```
 LNPacket inherits from Object
 Collaborators: LNNode
 Responsibility:
-	addressee - returns the name of the node to which the packet is sent.
-	contents - describes the contents of the message sent.
-	originator - references the node that sent the packet.
+	- addresseeName - returns the name of the node to which the packet is sent.
+	- contents - describes the contents of the message sent.
+	- originatorName -  that sent the packet.
 ```
 
 #### Exercise: defining class `LNPacket`
 
-In the `LAN` package, create a subclass of `Object` called `LNPacket`, with three instance variables: `contents`, `addressee`, and `originator`. Create accessors and mutators for each of them in the `accessing` protocol. The addressee is represented as a symbol, the contents as a string and the originator has a reference to a `LNNode`.
+In the `SimpleLAN` package:
+- Create a subclass of `Object` called `LNPacket`, with three instance variables: `contents`, `addressee`, and `originator`. - Initialize them to some default value (see test below).
+- Create accessors and mutators for each of them in the `accessing` protocol. The addressee and the originator are the name of node and the contents as a string.
 
-#### Exercise: adding a `printOn:` method  
-Define the method `printOn: aStream` that puts a textual representation of a LNPacket on its argument `aStream`.
+```
+LNPacketTest >> testInitialized
+
+	| p |
+	p := LNPacket new.
+	self assert: p addresseeName equals: '/'.
+	self assert: p originatorName equals: '/'.
+	self assert: p contents equals: ''
+```
 
 #### Exercise: Adding `isAddressedTo:`
+
 Define the method `isAddressedTo: aNode` which returns whether a packet is addressed to a given node.
 
+```
+LNPacketTest >> testIsAddressedTo
+
+	^ (LNPacket new addresseeName: 'Mac') isAddressedTo: 'Mac'
+```
+
+#### Exercise: adding a `printOn:` method
+
+Define the method `printOn: aStream` that puts a textual representation of a `LNPacket` on its argument `aStream`.
+
+Here is a test that you should make sure it passes.
+
+```
+LNPacketTest >> testPrintString
+
+	self
+		assert: (LNPacket new
+				 addresseeName: 'Mac';
+				 contents: 'Pharo is cool';
+				 yourself) printString
+		equals: 'a LNPacket: Pharo is cool sentTo: Mac'
+```
+
+
+
+
+
+
 ###  Creating the class `LNWorkstation`
+Up until now our simulation only supports simple nodes whose behavior is just to pass the packet they receive around.
+We will now introduce new kind of nodes with different behavior. 
 
 A workstation is the entry point for new packets onto the LAN network. It can emit packets to other workstations, printers
-or file servers. Since it is kind of network `LNNode`, but provides additional behavior, we will define it a subclass of `LNNode`.
+or file servers. Since it is a kind of network node, but provides additional behavior, we will define it as a subclass of `LNNode`.
 Thus, it inherits the instance variables and methods defined in `LNNode`. Moreover, a workstation has to process packets that are addressed to it.
 
 ```
 LNWorkstation inherits from LNNode
-Collaborators: LNNode, LNWorkstation and LNPacket
+Collaborators: Node, Workstation and Packet
 Responsibility: (the ones of LNNode)
-	- send: aPacket - sends a LNPacket.
-	- accept: aPacket - perform an action on LNPackets sent to the workstation (printing in the transcript). For the other
-	packets just send them to the following nodes.
+	- send: aPacket - sends a packet.
+	- accept: aPacket - performs an action on packets sent to the workstation (e.g. printing in the transcript). For the other
+	packets just send them to the following node.
 ```
 
 #### Exercise: Define `LNWorkstation`
@@ -229,8 +263,8 @@ In the package `LAN` create a subclass of `LNNode` called `LNWorkstation` withou
 
 #### Exercise: Redefining the method `accept:`
 
-Define the method `accept: aLNPacket` so that if the workstation is the destination of the packet, the following message is written into 
-the Transcript. Note that if the packets are not addressed to the workstation they are sent to the next LNNode of the current one.
+Define the method `accept: aPacket` so that if the workstation is the destination of the packet, the following message is written into 
+the Transcript. Note that if the packets are not addressed to the workstation they are sent to the next node of the current one.
 
 ```
 (LNWorkstation new
