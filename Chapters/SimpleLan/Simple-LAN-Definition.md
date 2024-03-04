@@ -368,7 +368,7 @@ Responsibility:
 
 Specialize the method `accept:` on the class `LNPrinter` to print the contents of the packet if necessary.
 
-##### Scenario
+##### Illustrating scenario
 
 
 ```
