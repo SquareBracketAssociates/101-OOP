@@ -4,7 +4,22 @@ In this chapter you will learn how to introduce hooks and template methods to fa
 First we look at the current situation and introduce changes step by steps.
 
 
-### Current situation
+### Hook for accept
+
+Right now subclasses such as `LNWorkstation` or `LNPrinter` redefine the `accept:` method and check that the packet is sent to the receiver and perform a specific action else passes it to the next node. 
+
+
+```
+LNPrinter >> accept: aPacket	(aPacket isAddressedTo: self) 
+		ifTrue: [ 'Node ' , aPacket originatorName , ' sent to printer: '		, aPacket contents traceCr ]
+	ifFalse: [ super accept: aPacket ]
+```
+
+We define such behavior in the superclass and introduces a new method called `treatPacket:`. Such new method will be redefined in the all the subclasses. 
+
+
+
+### Current situation (obsolete)
 
 The solution proposed for printing a Node just uses the default instance printing protocol of Pharo.
 

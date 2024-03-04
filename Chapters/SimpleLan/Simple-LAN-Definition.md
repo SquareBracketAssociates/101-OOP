@@ -213,8 +213,9 @@ Responsibility:
 #### Exercise: defining class `LNPacket`
 
 In the `SimpleLAN` package:
-- Create a subclass of `Object` called `LNPacket`, with three instance variables: `contents`, `addressee`, and `originator`. - Initialize them to some default value (see test below).
-- Create accessors and mutators for each of them in the `accessing` protocol. The addressee and the originator are the name of nodes and the contents as a string.
+- Create a subclass of `Object` called `LNPacket`, with three instance variables: `contents`, `addresseeName`, and `originatorName`. 
+- Initialize them to some default value (see test below).
+- Create accessors and mutators for each of them in the `accessing` protocol. 
 
 ```
 LNPacketTest >> testInitialized
@@ -233,7 +234,7 @@ Define the method `isAddressedTo: aNode` which returns whether a packet is addre
 ```
 LNPacketTest >> testIsAddressedTo
 
-	^ (LNPacket new addresseeName: 'Mac') isAddressedTo: 'Mac'
+	^ (LNPacket new addresseeName: 'Mac') isAddressedTo: (LNNode new name: 'Mac')
 ```
 
 #### Exercise: adding a `printOn:` method
@@ -278,10 +279,10 @@ In the package `SimpleLAN` create a subclass of `LNNode` called `LNWorkstation` 
 
 #### Exercise: Redefining the method `accept:`
 
-Define the method `accept: aPacket` so that if the workstation is the destination of the packet, the following message is written into 
+Define the method `accept: aPacket` so that if the workstation is the destination of the packet, a message is written into 
 the Transcript. When the packets are not addressed to the workstation they are sent to the next node of the current one.
 
-The following two scenarios illustrate the expected behavior. First the 
+The following two scenarios illustrate the expected behavior. First the one send a packet to the first node.
 
 
 ```
@@ -293,7 +294,11 @@ The following two scenarios illustrate the expected behavior. First the
 						name: 'Mac2';
 						yourself);
 			yourself) accept: (LNPacket new addresseeName: 'Mac')
+```
 
+produces 
+
+```
 Mac accepted packet
 ```
 
@@ -335,7 +340,7 @@ LNWorkstation >> emit: aLNPacket
 	... Your code here ...
 ```
 
-This way we can now write the following scenario
+This way we can now write the following scenario:
 
 ```
 (LNWorkstation new
@@ -350,7 +355,7 @@ This way we can now write the following scenario
 
 ###  Creating the class `LNPrinter`
 
-With nodes and workstations, we provide only limited functionality of a real LAN. Of course, we would like to do something with the packets that are travelling around the LAN. Therefore, you will now create a class `LNPrinter`, a special node that when it receives packets addressed to it, prints them (on the Transcript). Implement the class `LNPrinter`.
+You will now create a class `LNPrinter`, a special node that when it receives packets addressed to it, prints them (on the Transcript). Define the class `LNPrinter`.
 
 ```
 LNPrinter inherits from LNNode
@@ -361,90 +366,75 @@ Responsibility:
 	- print: aLNPacket - prints the contents of the packet (into the Transcript for example).
 ```
 
+Specialize the method `accept:` on the class `LNPrinter` to print the contents of the packet if necessary.
+
+##### Scenario
+
+
+```
+(LNWorkstation new
+	name: 'Mac';
+	nextNode: (LNNode new
+			name: 'PC1';
+			nextNode: (LNWorkstation new
+						name: 'Mac2';
+						nextNode: (LNPrinter new
+								name: 'Printer1';
+								yourself);
+					   yourself))) emit: (LNPacket new
+		 addresseeName: 'Printer1';
+		 contents: 'Pharo is cool';
+		 yourself)
+```
+
+produces the following trace:
+
+```
+Mac sends a packet to: PC1
+PC1 sends a packet to: Mac2
+Mac2 sends a packet to: Printer1
+Pharo is cool
+```
+
+
+
 ###  Simulating the LAN
 
-Implement the following two methods on the class side of the class `LNNode`, in a protocol called `examples`. But take care: the code presented below has some bugs that you should find and fix!.
+Implement the following method on the class side of the class `LNNode`, in a protocol called `examples`.
 
 ```
 LNNode class >> simpleLan
-  "Create a simple lan"
-  "self simpleLan"
+	<script>
 
-  | mac pc node1 node2 igPrinter |
+	| mac pc node1 node2 igPrinter |
 
-  "create the nodes, workstations, printers and fileserver"
-  mac := Workstation new name: #mac.
-  pc := LNWorkstation new name: #pc.
-  node1 := LNNode new name: #Node1.
-  node2 := LNNode new name: #Node2.
-  node3 := LNNode new name: #Node3.
-  igPrinter := LNPrinter new name: #IGPrinter.
+	"create the nodes, workstations and printers"
+	mac := Workstation new name: 'mac'.
+	pc := LNWorkstation new name: 'pc'.
+	node1 := LNNode new name: 'Node1'.
+	node2 := LNNode new name: 'Node2'.
+	node3 := LNNode new name: 'Node3'.
+	igPrinter := LNPrinter new name: 'IGPrinter'.
 
-  "connect the different LNNodes."
-  mac nextNode: node1.
-  node1 nextNode: node2.
-  node2 nextNode: igPrinter.
-  igPrinter nextNode: node3.
-  node3 nextNode: pc.
-  pc nextNode: mac.
+	"connect the different LNNodes."
+	mac nextNode: node1.
+	node1 nextNode: node2.
+	node2 nextNode: igPrinter.
+	igPrinter nextNode: node3.
+	node3 nextNode: pc.
+	pc nextNode: mac.
 
-  "create a LNPacket and start simulation"
-  packet := LNPacket new
-            addressee: #IGPrinter;
-            contents: 'This LNPacket travelled around to the printer IGPrinter.
+	"create a LNPacket and start simulation"
+	packet := LNPacket new
+		addresseeName: 'IGPrinter';
+		contents: 'This LNPacket travelled around to the printer IGPrinter'.
 
-  mac emit: LNPacket.
+	mac emit: packet.
 ```
 
-```
-LNNode class >> anotherSimpleLan
-   "create the nodes, workstations and printers"
-
-   | mac pc node1 node2 igPrinter node3 packet |
-   mac:= Workstation new name: #mac.
-   pc := Workstation new name: #pc.
-   node1 := LNNode new name: #Node1.
-   node2 := LNNode new name: #Node2.
-   node3 := LNNode new name: #Node3.
-   igPrinter := LNPrinter new name: #IGPrinter.
-
-   "connect the different LNNodes." 
-   mac nextNode: node1.
-   node1 nextNode: node2.
-   node2 nextNode:igPrinter.
-   igPrinter nextNode: node3.
-   node3 nextNode: pc.
-   pc nextNode: mac.
-
-   "create a LNPacket and start simulation''
-   packet := LNPacket new
-             addressee: #anotherPrinter;
-             contents: 'This packet travels around
-             to the printer IGPrinter'.
-   pc emit: packet.
-```
-
-As you will notice the system does not handle loops, so we will propose a solution to this problem in the future. To break the loop, use Command .
-
-###  Create the class `FileServer`
-
-We can create new extensions for our LAN.  Create the class `FileServer`, which is a special `LNNode` that
-saves packets that are addressed to it. We can use a simple collection to keep the packet 
-
-
-```
-FileServer inherits from LNNode
-Collaborators: LNNode and LNPacket
-Responsibility:
-	- accept: aLNPacket - if the LNPacket is addressed to the file server save it (Transcript trace) 
-        else send the LNPacket to the following LNNode.
-	- save: aLNPacket - save a LNPacket.
-	- retrievePacketsFrom: aLNNode - returns the packets sent from a given node.
-	- reset - clean the packets received.
-```
-
+As you will notice the system does not handle loops, so we will propose a solution to this problem in the future. To break the loop, use Command.
 
 ###  Conclusion
 
-You created a simple simulator of a local network. In the following chapters we will revisit such project to illustrate different points.
+You created a simple simulator of a local network. In the following chapters, we will revisit such a project to illustrate different points.
 

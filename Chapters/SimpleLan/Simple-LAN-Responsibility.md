@@ -12,6 +12,11 @@ of an object to provide a well-defined interface protecting itself from its clie
 is that by delegating to other objects, an object concentrates on a single task and responsibility. We now
 look at how such guidelines can help us to provide better objects in our example.
 
+
+### 
+
+
+
 ### Current situation
 
 The interface of the packet class is weak. It just provides free access to its data. The main impact of
