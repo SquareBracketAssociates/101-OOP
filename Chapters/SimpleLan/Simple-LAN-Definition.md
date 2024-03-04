@@ -8,7 +8,7 @@ From an object-oriented point of view, it is really interesting because it shows
 
 You will define step by step an application that simulates a simple Local Area Network (LAN).  You will create several classes: `LNPacket`, `LNNode`, `LNWorkstation`, and `LNPrintServer`. We start with the simplest version of a LAN. In subsequent exercises, we will add new requirements and modify the proposed implementation to take them into account.
 
-![An example of a LAN with packets.](figures/lan-simple width=80)
+![An example of a LAN with packets.](figures/lan-simple width=60)
 
 
 ###  Creating the class `LNNode`
@@ -87,19 +87,33 @@ LNNode >> accept: aPacket
 	self send: aPacket
 ```
 
+
 ```
 LNNode >> send: aPacket
-	"Precondition: self has a nextNode"
 
-	 self name trace.
-	' sends a packet to: ' trace.
-	 self nextNode name traceCr. 
-	 self nextNode accept: aPacket.
+	nextNode ifNotNil: [
+		self name trace.
+		' sends a packet to: ' trace.
+		nextNode name traceCr.
+		nextNode accept: aPacket ]
 ```
 
 Note that 
 - `trace` displays in the transcript the result of sending the message `printOn:` to the receiver.
 - `traceCr` has a similar behavior but adds a carriage return at the end. 
+
+
+The following snippet 
+
+```
+(LNNode new
+    name: 'Mac' ;
+    nextNode: (LNNode new name: 'PC1'))
+          accept: (LNPacket new addresseeName: 'Mac')
+
+On Transcript: 
+	Mac sends a packet to: PC1
+```
 
 
 
@@ -117,12 +131,12 @@ In this case we want to have the name of the receiver followed by the name of it
 The following test captures this behavior.
 
 ```
-testPrintingWithANextNode
+LNNode >> testPrintingWithANextNode
 
 	self
 		assert: (LNNode new
-				 name: #LNNode1;
-				 nextNode: (LNNode new name: #PC1)) printString
+				 name: 'LNNode1';
+				 nextNode: (LNNode new name: 'PC1')) printString
 		equals: 'LNNode1 -> PC1'
 ```
 
@@ -130,11 +144,11 @@ The second case is when the receiver does not have a next node. In this case, we
 The following test captures this behavior.  
 
 ```
-testPrintingWithoutNextNode
+LNNode >> testPrintingWithoutNextNode
 
 	self
 		assert: (LNNode new
-				 name: #LNNode1;
+				 name: 'LNNode1';
 				 printString)
 		equals: 'LNNode1 -> /'
 ```
@@ -237,16 +251,13 @@ LNPacketTest >> testPrintString
 
 
 
-
-
-
 ###  Creating the class `LNWorkstation`
 Up until now our simulation only supports simple nodes whose behavior is just to pass the packet they receive around.
-We will now introduce new kind of nodes with different behavior. 
+We will now introduce new kinds of nodes with different behavior. 
 
 A workstation is the entry point for new packets onto the LAN network. It can emit packets to other workstations, printers
 or file servers. Since it is a kind of network node, but provides additional behavior, we will define it as a subclass of `LNNode`.
-Thus, it inherits the instance variables and methods defined in `LNNode`. Moreover, a workstation has to process packets that are addressed to it.
+Thus, it inherits the instance variables and methods defined in `LNNode`. Moreover, a workstation has to process packets that are addressed to it, therefore it will specialize the method `accept:`.
 
 ```
 LNWorkstation inherits from LNNode
@@ -259,37 +270,78 @@ Responsibility: (the ones of LNNode)
 
 #### Exercise: Define `LNWorkstation`
 
-In the package `LAN` create a subclass of `LNNode` called `LNWorkstation` without instance variables. 
+In the package `SimpleLAN` create a subclass of `LNNode` called `LNWorkstation` without instance variables. 
 
 #### Exercise: Redefining the method `accept:`
 
 Define the method `accept: aPacket` so that if the workstation is the destination of the packet, the following message is written into 
-the Transcript. Note that if the packets are not addressed to the workstation they are sent to the next node of the current one.
+the Transcript. When the packets are not addressed to the workstation they are sent to the next node of the current one.
+
+The following two scenarios illustrate the expected behavior. First the 
+
 
 ```
 (LNWorkstation new
-    name: #Mac ;
-    nextNode: (LNPrinter new name: #PC1))
-          accept: (LNPacket new addressee: #Mac)
+	 name: 'Mac';
+	 nextNode: (LNNode new
+			  name: 'PC1';
+			  nextNode: (LNWorkstation new
+						name: 'Mac2';
+						yourself);
+			yourself) accept: (LNPacket new addresseeName: 'Mac')
 
-A LNPacket is accepted by the Workstation Mac
+Mac accepted packet
 ```
 
-Hints: To implement the accept of a `LNPacket` not addressed to the workstation, you could copy and paste the code of the `LNNode` class. However this is a bad practice, decreasing the reuse of code and the ''Say it only once'' rule. It is better to invoke the default code that is currently overridden by using `super`.
+The second scenario shows that when the packet is not addressed to a node, it passes it to its next node.
+
+```
+LNWorkstation new
+	name: 'Mac';
+	nextNode: (LNNode new
+			name: 'PC1';
+			nextNode: (LNWorkstation new
+					name: 'Mac2';
+					yourself);
+			yourself)) accept: (LNPacket new addresseeName: 'Mac2')
+```
+
+produces 
+
+```
+Mac sends a packet to: PC1
+PC1 sends a packet to: Mac2
+Mac2 accepted packet
+```
+
+##### About good design. 
+
+To implement the behavior of the `accept:` method when packet is not addressed to the workstation, you could copy and paste the code of the `LNNode` class. However, this is a bad practice, decreasing the reuse of code and the ''Say it only once'' rule. Indeed if we copy and paste, future changes in the superclass code may not be taken into account. This is why is better to invoke the behavior defined in the superclass and that is currently overridden by using `super`.
 
 #### Exercise: Defining the method `emit:`
 
 Define the method `emit:` that is responsible for inserting packets in the network in the method protocol `send-receive`. In particular a packet should be marked with its originator and then sent.
 
 ```
-LNWorkstation>>emit: aLNPacket
+LNWorkstation >> emit: aLNPacket
     "This is how LNPackets get inserted into the network.
     This is a likely method to be rewritten to permit
-    LNPackets to be entered in various ways. Currently,
-    I assume that someone else creates the LNPacket and
-    passes it to me as an argument."
+    LNPackets to be entered in various ways."
  
-	"your code here"
+	... Your code here ...
+```
+
+This way we can now write the following scenario
+
+```
+(LNWorkstation new
+		 name: 'Mac';
+		 nextNode: (LNNode new
+				  name: 'PC1';
+				  nextNode: (LNWorkstation new
+						   name: 'Mac2';
+						   yourself);
+				  yourself)) emit: (LNPacket new addresseeName: 'Mac2')
 ```
 
 ###  Creating the class `LNPrinter`
