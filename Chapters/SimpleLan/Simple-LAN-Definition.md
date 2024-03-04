@@ -13,7 +13,9 @@ You will define step by step an application that simulates a simple Local Area N
 
 ###  Creating the class `LNNode`
 
-The class `LNNode` will be the root of all the entities that form a LAN: a printer, a server, and a computer. This class contains the common behavior for all nodes. As a network is defined as a linked list of nodes, a node should always know its next node. A node should be uniquely identifiable with a name. We represent the name of a node using a symbol (because symbols are unique in Pharo) and the next node using a node object. It is the node's responsibility to send and receive packets of information. In the next section, we will define the class that represents packets.
+The class `LNNode` will be the root of all the entities that form a LAN: a printer, a server, and a computer. This class contains the common behavior for all nodes. 
+
+As a network is defined as a linked list of nodes, a node should always know its next node. A node should be uniquely identifiable with a name. It is the node's responsibility to send and receive packets of information. In the next section, we will define the class that represents packets.
 
 ```
 LNNode inherits from Object
@@ -98,12 +100,14 @@ LNNode >> send: aPacket
 		nextNode accept: aPacket ]
 ```
 
-Note that 
-- `trace` displays in the transcript the result of sending the message `printOn:` to the receiver.
+Note that:
+- `trace` displays in the Transcript the result of sending the message `printOn:` to the receiver.
 - `traceCr` has a similar behavior but adds a carriage return at the end. 
 
 
-The following snippet 
+##### A little example. 
+
+The following snippet shows basic behavior of an open LAN composed of two nodes, Mac and PC1. 
 
 ```
 (LNNode new
@@ -119,15 +123,15 @@ On Transcript:
 
 ### Better printString
 
-The textual representation of a node is not adequate to follow the simulation. 
-We will address this problem. 
-For this you will redefine the method `printOn:` which is responsible for the textual representation of an object.
+The textual representation of a node is not adequate to debug the code. It only proposes generic information such as 'aLLNode'.
+We should address this problem. 
+For this, you will redefine the method `printOn:` which is responsible for the textual representation of an object.
 Now before coding head first, let us specify what output we want. 
-For this we will define a couple of tests.
+We define a couple of tests.
 
 
 Let us start from the simplest case: we have a node with a name and a next node. 
-In this case we want to have the name of the receiver followed by the name of its next node.
+In this case, we want to have the name of the receiver followed by the name of its next node.
 The following test captures this behavior.
 
 ```
@@ -165,7 +169,7 @@ LNNode >> printOn: aStream
 		ifNotNil: [ aStream nextPutAll: nextNode name ]
 ```
 
-Now there one case that we should still cover: when the node was not given a name. 
+Now there is one case that we should still cover: when the node was not given a name. 
 The following test shows the expected result.
 
 
@@ -210,7 +214,7 @@ Responsibility:
 
 In the `SimpleLAN` package:
 - Create a subclass of `Object` called `LNPacket`, with three instance variables: `contents`, `addressee`, and `originator`. - Initialize them to some default value (see test below).
-- Create accessors and mutators for each of them in the `accessing` protocol. The addressee and the originator are the name of node and the contents as a string.
+- Create accessors and mutators for each of them in the `accessing` protocol. The addressee and the originator are the name of nodes and the contents as a string.
 
 ```
 LNPacketTest >> testInitialized
