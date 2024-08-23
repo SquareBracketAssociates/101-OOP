@@ -32,7 +32,7 @@
 
 # About objects and classes
 
-In this part of the book we suggest carefully reading the first chapter before continuing with the rest.
+In this part of the book, we suggest carefully reading the first chapter before continuing with the rest.
 The other chapters contain extremely simple exercises which may be tedious to read in one sitting.
 
 <!inputFile|path=Chapters/OOPNutshell/OOPNutshell.md!>
@@ -47,7 +47,7 @@ The other chapters contain extremely simple exercises which may be tedious to re
 
 # Starting with interaction
 
-The purpose of this mini project is to define a little network simulator. 
+The purpose of this mini-project is to define a little network simulator. 
  If you understand well basic object-oriented concepts, you can skip this part of the book even if this is fun to code a little simulator and in particular its less guided extensions.
  
 <!inputFile|path=Chapters/SimpleLan/Simple-LAN-Definition.md!>
